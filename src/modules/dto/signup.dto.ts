@@ -1,4 +1,4 @@
-export class UserDto {
+export class SignupDto {
   readonly firstName: string;
   readonly middleName: string;
   readonly lastName: string;
