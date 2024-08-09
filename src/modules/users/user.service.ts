@@ -1,5 +1,5 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
-import { USER_REPOSITORY } from 'src/core/constants';
+import { USER_REPOSITORY } from '../../core/constants';
 import { SignupDto } from '../dto/signup.dto';
 import { User } from './user.model';
 
