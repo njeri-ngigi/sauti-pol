@@ -1,18 +1,503 @@
+import { faker } from '@faker-js/faker';
+import { INestApplication } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import request from 'supertest';
+import { SEQUELIZE } from '../../core/constants';
+import { databaseProviders } from '../../core/database/database.providers';
+import { SignupDto } from '../dto/signup.dto';
+import { userProviders } from '../users/user.provider';
+import { UserService } from '../users/user.service';
 import { AuthController } from './auth.controller';
+import { AuthModule } from './auth.module';
+import { AuthService } from './auth.service';
 
 describe('AuthController', () => {
-  let controller: AuthController;
+  const validPassword = 'SomePassword123!';
+  const accessToken = 'access-token';
+  const defaultUser: SignupDto = {
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    email: faker.internet.email(),
+    password: validPassword,
+  };
+  let app: INestApplication;
+  let mockModule: TestingModule;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+  beforeAll(async () => {
+    mockModule = await Test.createTestingModule({
+      imports: [AuthModule],
       controllers: [AuthController],
-    }).compile();
+      providers: [
+        AuthService,
+        UserService,
+        ...databaseProviders,
+        ...userProviders,
+      ],
+    })
+      .overrideProvider(JwtService)
+      .useValue({
+        signAsync: () => accessToken,
+      })
+      .compile();
 
-    controller = module.get<AuthController>(AuthController);
+    // reset the database
+    await mockModule.get(SEQUELIZE).sync({ force: true });
+
+    // create the app instance
+    app = mockModule.createNestApplication();
+    await app.init();
+
+    // signup default user
+    await request(app.getHttpServer())
+      .post('/auth/signup')
+      .send(defaultUser)
+      .expect(201)
+      .expect((response) => {
+        expect(response.body.accessToken).toBe(accessToken);
+      });
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  afterAll(async () => {
+    // close the database connection
+    await mockModule.get(SEQUELIZE).close();
+    await app.close();
+  });
+
+  describe('POST /auth/login', () => {
+    it('should login a user successfully', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: defaultUser.email, password: defaultUser.password })
+        .expect(200);
+
+      expect(response.body.accessToken).toBe(accessToken);
+    });
+
+    describe('should return bad request error 400 if', () => {
+      it('email is missing', async () => {
+        await request(app.getHttpServer())
+          .post('/auth/login')
+          .send({
+            password: defaultUser.password,
+          })
+          .expect(400)
+          .expect((response) => {
+            expect(response.body.message).toBe('Email cannot be empty');
+          });
+      });
+
+      it('email is empty', async () => {
+        await request(app.getHttpServer())
+          .post('/auth/login')
+          .send({
+            email: '',
+            password: defaultUser.password,
+          })
+          .expect(400)
+          .expect((response) => {
+            expect(response.body.message).toBe('Email cannot be empty');
+          });
+      });
+
+      it('password is missing', async () => {
+        await request(app.getHttpServer())
+          .post('/auth/login')
+          .send({
+            email: defaultUser.email,
+          })
+          .expect(400)
+          .expect((response) => {
+            expect(response.body.message).toBe('Password cannot be empty');
+          });
+      });
+
+      it('password is empty', async () => {
+        await request(app.getHttpServer())
+          .post('/auth/login')
+          .send({
+            email: defaultUser.email,
+            password: '',
+          })
+          .expect(400)
+          .expect((response) => {
+            expect(response.body.message).toBe('Password cannot be empty');
+          });
+      });
+
+      describe('should return unauthorized error 401 if', () => {
+        it('email is invalid', async () => {
+          const nonExistentUserEmail = 'non-user@test.go.ke';
+
+          await request(app.getHttpServer())
+            .post('/auth/login')
+            .send({
+              email: nonExistentUserEmail,
+              password: defaultUser.password,
+            })
+            .expect(401)
+            .expect((response) => {
+              expect(response.body.message).toBe('Invalid email or password');
+            });
+        });
+
+        it('password is invalid', async () => {
+          const invalidPassword = 'invalid-password';
+
+          await request(app.getHttpServer())
+            .post('/auth/login')
+            .send({
+              email: defaultUser.email,
+              password: invalidPassword,
+            })
+            .expect(401)
+            .expect((response) => {
+              expect(response.body.message).toBe('Invalid email or password');
+            });
+        });
+      });
+    });
+
+    describe('POST /auth/signup', () => {
+      it('should signup a user successfully', async () => {
+        const newUser: SignupDto = {
+          firstName: faker.person.firstName(),
+          lastName: faker.person.lastName(),
+          email: faker.internet.email(),
+          password: validPassword,
+        };
+
+        await request(app.getHttpServer())
+          .post('/auth/signup')
+          .send(newUser)
+          .expect(201)
+          .expect((response) => {
+            expect(response.body.accessToken).toBe(accessToken);
+          });
+      });
+
+      it('should signup a user with a phone number successfully', async () => {
+        const newUser: SignupDto = {
+          firstName: faker.person.firstName(),
+          lastName: faker.person.lastName(),
+          email: faker.internet.email(),
+          password: validPassword,
+          phone: '0712345678',
+        };
+
+        await request(app.getHttpServer())
+          .post('/auth/signup')
+          .send(newUser)
+          .expect(201)
+          .expect((response) => {
+            expect(response.body.accessToken).toBe(accessToken);
+          });
+      });
+
+      it('should signup a user with a middle name successfully', async () => {
+        const newUser: SignupDto = {
+          firstName: faker.person.firstName(),
+          lastName: faker.person.lastName(),
+          email: faker.internet.email(),
+          password: validPassword,
+          middleName: faker.person.firstName(),
+        };
+
+        await request(app.getHttpServer())
+          .post('/auth/signup')
+          .send(newUser)
+          .expect(201)
+          .expect((response) => {
+            expect(response.body.accessToken).toBe(accessToken);
+          });
+      });
+
+      describe('should return bad request error 400 if', () => {
+        it('first name is missing', async () => {
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              lastName: defaultUser.lastName,
+              email: defaultUser.email,
+              password: defaultUser.password,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe('firstName cannot be empty');
+            });
+        });
+
+        it('first name is empty', async () => {
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: '',
+              lastName: defaultUser.lastName,
+              email: defaultUser.email,
+              password: defaultUser.password,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe('firstName cannot be empty');
+            });
+        });
+
+        it('last name is missing', async () => {
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              email: defaultUser.email,
+              password: defaultUser.password,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe(
+                'lastName name cannot be empty',
+              );
+            });
+        });
+
+        it('last name is empty', async () => {
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              lastName: '',
+              email: defaultUser.email,
+              password: defaultUser.password,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe(
+                'lastName name cannot be empty',
+              );
+            });
+        });
+
+        it('email is missing', async () => {
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              lastName: defaultUser.lastName,
+              password: defaultUser.password,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe('email cannot be empty');
+            });
+        });
+
+        it('email is empty', async () => {
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              lastName: defaultUser.lastName,
+              email: '',
+              password: defaultUser.password,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe('email cannot be empty');
+            });
+        });
+
+        it('email is invalid', async () => {
+          const invalidEmail = 'invalid-email';
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              lastName: defaultUser.lastName,
+              email: invalidEmail,
+              password: defaultUser.password,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe('invalid email address');
+            });
+        });
+
+        it('password is missing', async () => {
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              lastName: defaultUser.lastName,
+              email: defaultUser.email,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe('password cannot be empty');
+            });
+        });
+
+        it('password is empty', async () => {
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              lastName: defaultUser.lastName,
+              email: defaultUser.email,
+              password: '',
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe('password cannot be empty');
+            });
+        });
+
+        it('password is less than 10 characters', async () => {
+          const invalidPassword = 'short';
+
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              lastName: defaultUser.lastName,
+              email: defaultUser.email,
+              password: invalidPassword,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe(
+                'password must be at least 10 characters',
+              );
+            });
+        });
+
+        it('password does not contain an uppercase letter', async () => {
+          const invalidPassword = 'lowercasepassword';
+
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              lastName: defaultUser.lastName,
+              email: defaultUser.email,
+              password: invalidPassword,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe(
+                'password must contain at least one uppercase letter',
+              );
+            });
+        });
+
+        it('password does not contain a digit', async () => {
+          const invalidPassword = 'PasswordWithoutDigit';
+
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              lastName: defaultUser.lastName,
+              email: defaultUser.email,
+              password: invalidPassword,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe(
+                'password must contain at least one digit',
+              );
+            });
+        });
+
+        it('password does not contain a special character', async () => {
+          const invalidPassword = 'PasswordWithoutSpecialCharacter123';
+
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send({
+              firstName: defaultUser.firstName,
+              lastName: defaultUser.lastName,
+              email: defaultUser.email,
+              password: invalidPassword,
+            })
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe(
+                'password must contain at least one special character',
+              );
+            });
+        });
+
+        it('phone number is present and is less than 10 digits', async () => {
+          const shortPhoneNumber = '071234567';
+          const newUser: SignupDto = {
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            email: faker.internet.email(),
+            password: validPassword,
+            phone: shortPhoneNumber,
+          };
+
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send(newUser)
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe(
+                'phone number must be 10 digits',
+              );
+            });
+        });
+
+        it('phone number is present and has more than 10 digits', async () => {
+          const longPhoneNumber = '07123456789';
+          const newUser: SignupDto = {
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            email: faker.internet.email(),
+            password: validPassword,
+            phone: longPhoneNumber,
+          };
+
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send(newUser)
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe(
+                'phone number must be 10 digits',
+              );
+            });
+        });
+
+        it('phone number is present and has non-numbers', async () => {
+          const invalidPhoneNumber = '071234567a';
+          const newUser: SignupDto = {
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            email: faker.internet.email(),
+            password: validPassword,
+            phone: invalidPhoneNumber,
+          };
+
+          await request(app.getHttpServer())
+            .post('/auth/signup')
+            .send(newUser)
+            .expect(400)
+            .expect((response) => {
+              expect(response.body.message).toBe(
+                'phone number must contain only numbers',
+              );
+            });
+        });
+      });
+
+      it('should return conflict error 409 if user already exists', async () => {
+        await request(app.getHttpServer())
+          .post('/auth/signup')
+          .send(defaultUser)
+          .expect(409)
+          .expect((response) => {
+            expect(response.body.message).toBe('User already exists');
+          });
+      });
+    });
   });
 });

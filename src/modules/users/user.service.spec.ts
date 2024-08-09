@@ -25,8 +25,7 @@ describe('UserService', () => {
   const defaultUser: SignupDto = {
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),
-    // email: faker.internet.email(),
-    email: 'same@email.com',
+    email: faker.internet.email(),
     password: faker.internet.password(),
   };
 
@@ -47,7 +46,7 @@ describe('UserService', () => {
   });
 
   afterAll(async () => {
-    mockModule.get(SEQUELIZE).close();
+    await mockModule.get(SEQUELIZE).close();
   });
 
   describe('findOneByEmail', () => {

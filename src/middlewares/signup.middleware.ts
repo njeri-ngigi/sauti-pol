@@ -17,11 +17,21 @@ export class SignupValidatorMiddleware implements NestMiddleware {
 
     const hasNonNumbers = /[^0-9]/.test(phone);
     if (hasNonNumbers) {
-      throw new BadRequestException('Phone number must contain only numbers');
+      throw new BadRequestException('phone number must contain only numbers');
     }
 
     if (phone && phone.length !== 10) {
-      throw new BadRequestException('Phone number must be 10 digits');
+      throw new BadRequestException('phone number must be 10 digits');
+    }
+  }
+
+  validateNames(firstName: string, lastName: string) {
+    if (!firstName || firstName.trim().length === 0) {
+      throw new BadRequestException('firstName cannot be empty');
+    }
+
+    if (!lastName || lastName.trim().length === 0) {
+      throw new BadRequestException('lastName name cannot be empty');
     }
   }
 
@@ -29,7 +39,7 @@ export class SignupValidatorMiddleware implements NestMiddleware {
     // TODO validate email by sending a confirmation email
 
     if (!email || email.trim().length === 0) {
-      throw new BadRequestException('Email cannot be empty');
+      throw new BadRequestException('email cannot be empty');
     }
 
     const validateEmail = new RegExp(
@@ -37,35 +47,35 @@ export class SignupValidatorMiddleware implements NestMiddleware {
     );
 
     if (!validateEmail.test(email)) {
-      throw new BadRequestException('Invalid email address');
+      throw new BadRequestException('invalid email address');
     }
   }
 
   validatePassword(password: string) {
     if (!password || password.trim().length === 0) {
-      throw new BadRequestException('Password cannot be empty');
+      throw new BadRequestException('password cannot be empty');
     }
 
     if (password.length < 10) {
-      throw new BadRequestException('Password must be at least 12 characters');
+      throw new BadRequestException('password must be at least 10 characters');
     }
 
     const hasUpperCase = /[A-Z]/.test(password);
     if (!hasUpperCase) {
       throw new BadRequestException(
-        'Password must contain at least one uppercase letter',
+        'password must contain at least one uppercase letter',
       );
     }
 
     const hasDigits = /\d/.test(password);
     if (!hasDigits) {
-      throw new BadRequestException('Password must contain at least one digit');
+      throw new BadRequestException('password must contain at least one digit');
     }
 
     const hasSpecialCharacters = /[^a-zA-Z0-9]/i.test(password);
     if (!hasSpecialCharacters) {
       throw new BadRequestException(
-        'Password must contain at least one special character',
+        'password must contain at least one special character',
       );
     }
   }
@@ -78,10 +88,11 @@ export class SignupValidatorMiddleware implements NestMiddleware {
   }
 
   use(req: Request, _: Response, next: NextFunction) {
-    const { email, password, phone } = req.body;
+    const { email, password, phone, firstName, lastName } = req.body;
 
     this.validateEmail(email);
     this.validatePassword(password);
+    this.validateNames(firstName, lastName);
     this.validatePhone(phone);
 
     req.body.password = this.saltPassword(password);

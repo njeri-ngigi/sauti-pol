@@ -14,7 +14,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  private async getAccessToken(user: User): Promise<AuthDto> {
+  async generateAccessToken(user: User): Promise<AuthDto> {
     const payload = { email: user.email, id: user.id };
     const accessToken = await this.jwtService.signAsync(payload);
     return { accessToken };
@@ -35,11 +35,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    return this.getAccessToken(dbUser);
+    return this.generateAccessToken(dbUser);
   }
 
   async signupUser(user: SignupDto): Promise<AuthDto> {
     const dbUser = await this.userService.createUser(user);
-    return this.getAccessToken(dbUser);
+    return this.generateAccessToken(dbUser);
   }
 }
