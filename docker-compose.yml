@@ -1,0 +1,25 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile # optional if the file is named Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+
+  db:
+    image: postgres:14
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME_DEVELOPMENT}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
