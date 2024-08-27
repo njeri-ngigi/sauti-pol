@@ -21,5 +21,26 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  test:
+    build:
+      context: .
+    command: npm run test
+    depends_on:
+      - db-test
+    environment:
+      - DB_HOST=db-test
+
+  db-test:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME_TEST}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+
 volumes:
   postgres_data:
+  postgres_test_data:
