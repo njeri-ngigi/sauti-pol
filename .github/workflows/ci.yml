@@ -13,6 +13,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      DB_DIALECT: postgres
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USER: test_user
+      DB_PASSWORD: test_password
+      DB_NAME_TEST: test_db
+      NODE_ENV: test
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
