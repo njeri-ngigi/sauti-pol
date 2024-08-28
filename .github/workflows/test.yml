@@ -35,10 +35,7 @@ jobs:
         # Install the latest version:
         sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
         
-
-    # Step 3: Set up Docker Compose
-    - name: Set up Docker Compose
-      run: |
+        # Check the version:
         docker-compose --version
 
     # Step 4: Build the Docker images and run the tests
