@@ -30,26 +30,6 @@ jobs:
         # Check the version:
         docker-compose --version
 
-      # # Add Docker's official GPG key:
-      # sudo apt-get update
-      # sudo apt-get install ca-certificates curl
-      # sudo install -m 0755 -d /etc/apt/keyrings
-      # sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-      # sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-      # # Add the repository to Apt sources:
-      # echo \
-      #   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-      #   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-      #   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-      # sudo apt-get update
-
-      # # Install the latest version:
-      # sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-      
-      # # Check the version:
-      # docker-compose --version
-
     # Step 4: Build the Docker images and run the tests
     - name: Run tests with Docker Compose
       env:
@@ -58,5 +38,5 @@ jobs:
         DB_NAME_TEST: ${{ secrets.DB_NAME_TEST }}
       run: |
         docker-compose up -d db-test  # Start the test database container
-        docker-compose run test        # Run the test service
+        docker-compose run -e DB_USER=$DB_USER -e DB_PASSWORD=$DB_PASSWORD -e DB_NAME_TEST=$DB_NAME_TEST test  # Run the test service
         docker-compose down            # Clean up after tests
