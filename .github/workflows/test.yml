@@ -1,4 +1,4 @@
-name: Run Sautipol Nestjs Tests
+name: Run sauti-pol Nestjs Tests
 
 on:
   push:
@@ -15,12 +15,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Step 2: Set up Docker Compose
+    # Step 2: Install Docker Compose
+    - name: Install Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install docker-compose-plugin
+
+    # Step 3: Set up Docker Compose
     - name: Set up Docker Compose
       run: |
         docker-compose --version
 
-    # Step 3: Build the Docker images and run the tests
+    # Step 4: Build the Docker images and run the tests
     - name: Run tests with Docker Compose
       env:
         DB_USER: ${{ secrets.DB_USER }}
