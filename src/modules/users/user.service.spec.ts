@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SEQUELIZE } from '../../core/constants';
-import { DatabaseModule } from '../../core/database/database.module';
 import { databaseProviders } from '../../core/database/database.providers';
 import { SignupDto } from '../dto/signup.dto';
 import { UserModule } from './user.module';
@@ -31,12 +30,9 @@ describe('UserService', () => {
 
   beforeAll(async () => {
     mockModule = await Test.createTestingModule({
-      imports: [DatabaseModule, UserModule],
+      imports: [UserModule],
       providers: [UserService, ...databaseProviders, ...userProviders],
     }).compile();
-
-    // reset the database
-    await mockModule.get(SEQUELIZE).sync({ force: true });
 
     // get user service
     userService = await mockModule.resolve(UserService);

@@ -24,7 +24,13 @@ export const databaseProviders = [
 
       const sequelize = new Sequelize(config);
       sequelize.addModels([User]);
-      await sequelize.sync();
+
+      // For the test environment, we forcefully clear the database
+      // before running tests in the jest.global-setup.ts file
+      if (process.env.NODE_ENV !== TEST) {
+        await sequelize.sync({});
+      }
+
       return sequelize;
     },
   },

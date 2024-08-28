@@ -41,9 +41,6 @@ describe('AuthController', () => {
       })
       .compile();
 
-    // reset the database
-    await mockModule.get(SEQUELIZE).sync({ force: true });
-
     // create the app instance
     app = mockModule.createNestApplication();
     await app.init();
@@ -59,9 +56,8 @@ describe('AuthController', () => {
   });
 
   afterAll(async () => {
-    // close the database connection
-    await mockModule.get(SEQUELIZE).close();
     await app.close();
+    await mockModule.get(SEQUELIZE).close();
   });
 
   describe('POST /auth/login', () => {
