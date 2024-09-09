@@ -1,10 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SEQUELIZE } from '../../core/constants';
-import { databaseProviders } from '../../core/database/database.providers';
+import { DatabaseModule } from '../../core/database/database.module';
 import { SignupDto } from '../dto/signup.dto';
 import { UserModule } from './user.module';
-import { userProviders } from './user.provider';
 import { UserService } from './user.service';
 
 // Helper function to assert user
@@ -30,8 +29,7 @@ describe('UserService', () => {
 
   beforeAll(async () => {
     mockModule = await Test.createTestingModule({
-      imports: [UserModule],
-      providers: [UserService, ...databaseProviders, ...userProviders],
+      imports: [UserModule, DatabaseModule],
     }).compile();
 
     // get user service

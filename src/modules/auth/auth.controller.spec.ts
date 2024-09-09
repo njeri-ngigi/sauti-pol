@@ -4,13 +4,10 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { SEQUELIZE } from '../../core/constants';
-import { databaseProviders } from '../../core/database/database.providers';
+import { DatabaseModule } from '../../core/database/database.module';
 import { SignupDto } from '../dto/signup.dto';
-import { userProviders } from '../users/user.provider';
-import { UserService } from '../users/user.service';
-import { AuthController } from './auth.controller';
+import { UserModule } from '../users/user.module';
 import { AuthModule } from './auth.module';
-import { AuthService } from './auth.service';
 
 describe('AuthController', () => {
   const validPassword = 'SomePassword123!';
@@ -26,14 +23,7 @@ describe('AuthController', () => {
 
   beforeAll(async () => {
     mockModule = await Test.createTestingModule({
-      imports: [AuthModule],
-      controllers: [AuthController],
-      providers: [
-        AuthService,
-        UserService,
-        ...databaseProviders,
-        ...userProviders,
-      ],
+      imports: [AuthModule, UserModule, DatabaseModule],
     })
       .overrideProvider(JwtService)
       .useValue({
