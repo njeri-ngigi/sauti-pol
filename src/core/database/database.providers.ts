@@ -1,4 +1,9 @@
 import { Sequelize } from 'sequelize-typescript';
+import {
+  Division,
+  Institution,
+  Level,
+} from '../../modules/institutions/institutions.model';
 import { User } from '../../modules/users/user.model';
 import { DEVELOPMENT, PRODUCTION, SEQUELIZE, TEST } from '../constants';
 import { databaseConfig } from './database.config';
@@ -23,7 +28,7 @@ export const databaseProviders = [
       }
 
       const sequelize = new Sequelize(config);
-      sequelize.addModels([User]);
+      sequelize.addModels([User, Institution, Level, Division]);
 
       // For the test environment, we forcefully clear the database
       // before running tests in the jest.global-setup.ts file
