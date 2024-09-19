@@ -4,8 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './core/database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { InstitutionsModule } from './modules/institutions/institutions.module';
-import { UserModule } from './modules/users/user.module';
+import { InstitutionModule } from './modules/institution/institution.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { UserModule } from './modules/users/user.module';
     DatabaseModule,
     UserModule,
     AuthModule,
-    InstitutionsModule,
+    InstitutionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { SEQUELIZE } from '../core/constants';
 import { DatabaseModule } from '../core/database/database.module';
-import { UserModule } from '../modules/users/user.module';
+import { UserModule } from '../modules/user/user.module';
 
 module.exports = async function (globalConfig, projectConfig) {
   console.log(globalConfig.testPathPattern);

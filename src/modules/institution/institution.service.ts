@@ -4,10 +4,10 @@ import {
   INSTITUTION_REPOSITORY,
   LEVEL_REPOSITORY,
 } from '../../core/constants';
-import { Division, Institution, Level } from './institutions.model';
+import { Division, Institution, Level } from './institution.model';
 
 @Injectable()
-export class InstitutionsService {
+export class InstitutionService {
   constructor(
     @Inject(INSTITUTION_REPOSITORY)
     private readonly institutionModel: typeof Institution,

@@ -3,7 +3,7 @@ import {
   INSTITUTION_REPOSITORY,
   LEVEL_REPOSITORY,
 } from '../../core/constants';
-import { Division, Institution, Level } from './institutions.model';
+import { Division, Institution, Level } from './institution.model';
 
 export const institutionProviders = [
   { provide: INSTITUTION_REPOSITORY, useValue: Institution },

@@ -6,7 +6,7 @@ import request from 'supertest';
 import { SEQUELIZE } from '../../core/constants';
 import { DatabaseModule } from '../../core/database/database.module';
 import { SignupDto } from '../dto/signup.dto';
-import { UserModule } from '../users/user.module';
+import { UserModule } from '../user/user.module';
 import { AuthModule } from './auth.module';
 
 describe('AuthController', () => {

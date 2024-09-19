@@ -3,8 +3,8 @@ import {
   Division,
   Institution,
   Level,
-} from '../../modules/institutions/institutions.model';
-import { User } from '../../modules/users/user.model';
+} from '../../modules/institution/institution.model';
+import { User } from '../../modules/user/user.model';
 import { DEVELOPMENT, PRODUCTION, SEQUELIZE, TEST } from '../constants';
 import { databaseConfig } from './database.config';
 
