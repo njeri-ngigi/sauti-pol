@@ -79,3 +79,4 @@ Next steps
   - regular user -> can register as a voter and as candidates
   - admin -> can create/update/delete institutions and elections stuff
   - clerk -> can verify candidates against requirements
+
