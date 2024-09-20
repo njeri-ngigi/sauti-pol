@@ -53,7 +53,6 @@ Entities:
   - name
   - voter_id
   - position_id
-  - 
 - voter
   - name
   - user_id
@@ -66,3 +65,17 @@ Entities:
   - voter_id
 - admin
 - clerk
+
+DEVOPS:
+
+- add push check that runs all tests first before pushing
+- add logging
+- add tracing
+
+Next steps
+
+- do devops above
+- add RBAC
+  - regular user -> can register as a voter and as candidates
+  - admin -> can create/update/delete institutions and elections stuff
+  - clerk -> can verify candidates against requirements
