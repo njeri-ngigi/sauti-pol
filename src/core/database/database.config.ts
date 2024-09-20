@@ -19,6 +19,7 @@ export const databaseConfig: IDatabaseConfig = {
   test: {
     ...dbConfig(),
     database: process.env.DB_NAME_TEST,
+    logging: false,
   },
   production: {
     urlDatabase: process.env.DATABASE_URL,
