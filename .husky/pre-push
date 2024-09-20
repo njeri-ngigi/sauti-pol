@@ -1,0 +1,10 @@
+echo "Running tests before pushing..."
+
+npm run test:prepush
+
+if [ $? -ne 0 ]; then
+  echo "Tests failed. Aborting push..."
+  exit 1
+fi
+
+echo "Tests passed. Pushing..."
