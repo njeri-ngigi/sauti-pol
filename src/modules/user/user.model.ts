@@ -1,4 +1,5 @@
 import {
+  BeforeCreate,
   Column,
   DataType,
   Default,
@@ -6,6 +7,7 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
+import { Roles } from './role.provider';
 
 @Table
 export class User extends Model<User> {
@@ -51,9 +53,30 @@ export class User extends Model<User> {
   @Column({
     type: DataType.TEXT,
     allowNull: true,
+    unique: true,
   })
   phone: string;
 
   @Column({ defaultValue: true })
   isActive: boolean;
+
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(Roles),
+    defaultValue: Roles.USER,
+    allowNull: false,
+  })
+  role: string;
+
+  // sets the default role to user at creation
+  @BeforeCreate
+  static setDefaultStatus(instance: User) {
+    instance.role = Roles.USER;
+  }
+
+  toJSON() {
+    const user = Object.assign({}, this.get());
+    delete user.password;
+    return user;
+  }
 }
