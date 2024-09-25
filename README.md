@@ -56,7 +56,14 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+
 ```
+
+## Database commands
+
+Create seed file: `npx sequelize-cli seed:generate --name users`
+Seed data: `npx sequelize-cli db:seed:all`
+Drop data: `npx sequelize-cli db:seed:undo`
 
 ## Support
 
