@@ -17,11 +17,11 @@ export class SignupValidatorMiddleware implements NestMiddleware {
 
     const hasNonNumbers = /[^0-9]/.test(phone);
     if (hasNonNumbers) {
-      throw new BadRequestException('phone number must contain only numbers');
+      throw new BadRequestException('phone must contain only numbers');
     }
 
     if (phone && phone.length !== 10) {
-      throw new BadRequestException('phone number must be 10 digits');
+      throw new BadRequestException('phone must be 10 digits');
     }
   }
 

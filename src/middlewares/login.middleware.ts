@@ -10,11 +10,11 @@ export class LoginValidatorMiddleware implements NestMiddleware {
     const { email, password } = req.body;
 
     if (!email || email.trim().length === 0) {
-      throw new BadRequestException('Email cannot be empty');
+      throw new BadRequestException('email cannot be empty');
     }
 
     if (!password || password.trim().length === 0) {
-      throw new BadRequestException('Password cannot be empty');
+      throw new BadRequestException('password cannot be empty');
     }
 
     next();
