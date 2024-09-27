@@ -4,9 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { SEQUELIZE } from '../../core/constants';
-import { DatabaseModule } from '../../core/database/database.module';
 import { SignupDto } from '../dto/signup.dto';
-import { UserModule } from '../user/user.module';
 import { AuthModule } from './auth.module';
 
 describe('AuthController', () => {
@@ -23,7 +21,7 @@ describe('AuthController', () => {
 
   beforeAll(async () => {
     mockModule = await Test.createTestingModule({
-      imports: [AuthModule, UserModule, DatabaseModule],
+      imports: [AuthModule],
     })
       .overrideProvider(JwtService)
       .useValue({
@@ -69,7 +67,7 @@ describe('AuthController', () => {
           })
           .expect(400)
           .expect((response) => {
-            expect(response.body.message).toBe('Email cannot be empty');
+            expect(response.body.message).toBe('email cannot be empty');
           });
       });
 
@@ -82,7 +80,7 @@ describe('AuthController', () => {
           })
           .expect(400)
           .expect((response) => {
-            expect(response.body.message).toBe('Email cannot be empty');
+            expect(response.body.message).toBe('email cannot be empty');
           });
       });
 
@@ -94,7 +92,7 @@ describe('AuthController', () => {
           })
           .expect(400)
           .expect((response) => {
-            expect(response.body.message).toBe('Password cannot be empty');
+            expect(response.body.message).toBe('password cannot be empty');
           });
       });
 
@@ -107,7 +105,7 @@ describe('AuthController', () => {
           })
           .expect(400)
           .expect((response) => {
-            expect(response.body.message).toBe('Password cannot be empty');
+            expect(response.body.message).toBe('password cannot be empty');
           });
       });
 
@@ -426,9 +424,7 @@ describe('AuthController', () => {
             .send(newUser)
             .expect(400)
             .expect((response) => {
-              expect(response.body.message).toBe(
-                'phone number must be 10 digits',
-              );
+              expect(response.body.message).toBe('phone must be 10 digits');
             });
         });
 
@@ -447,9 +443,7 @@ describe('AuthController', () => {
             .send(newUser)
             .expect(400)
             .expect((response) => {
-              expect(response.body.message).toBe(
-                'phone number must be 10 digits',
-              );
+              expect(response.body.message).toBe('phone must be 10 digits');
             });
         });
 
@@ -469,7 +463,7 @@ describe('AuthController', () => {
             .expect(400)
             .expect((response) => {
               expect(response.body.message).toBe(
-                'phone number must contain only numbers',
+                'phone must contain only numbers',
               );
             });
         });

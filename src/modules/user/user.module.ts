@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { DatabaseModule } from '../../core/database/database.module';
 import { RoleMiddleware } from '../../middlewares/role.middleware';
 import { JwtModule } from '../jwt/jwt.module';
 import { UserController } from './user.controller';
@@ -9,7 +10,7 @@ import { UserService } from './user.service';
   providers: [UserService, ...userProviders],
   exports: [UserService],
   controllers: [UserController],
-  imports: [JwtModule],
+  imports: [DatabaseModule, JwtModule],
 })
 export class UserModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

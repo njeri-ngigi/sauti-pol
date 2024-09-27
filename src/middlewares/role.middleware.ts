@@ -3,8 +3,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtProvider } from 'src/modules/jwt/jwt.provider';
 import { isUUID } from 'validator';
+import { JwtProvider } from '../modules/jwt/jwt.provider';
 import { Roles } from '../modules/user/role.provider';
 
 @Injectable()
