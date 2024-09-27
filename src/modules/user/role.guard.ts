@@ -25,7 +25,7 @@ export class RoleGuard implements CanActivate {
 
     const authHeader = request.headers['authorization'];
     if (!authHeader) {
-      throw new UnauthorizedException('Authorization header not found');
+      throw new UnauthorizedException('authorization header not found');
     }
 
     const { id } = await this.jwtService.getUserJWTPayloadFromToken(authHeader);
@@ -50,7 +50,7 @@ export class RoleGuard implements CanActivate {
 
     const hasAccess = requiredRoles.includes(user.role);
     if (!hasAccess) {
-      throw new ForbiddenException('Insufficient permissions');
+      throw new ForbiddenException('insufficient permissions');
     }
 
     return hasAccess;

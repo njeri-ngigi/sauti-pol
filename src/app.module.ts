@@ -24,6 +24,5 @@ export class AppModule {}
 
 // TODO:
 // - test the RoleGuard: different roles, no roles, invalid token, no token
-// - test role middleware: different roles, no roles, invalid token, no token
-// - test user controller: updateUserRole, getAllUsers
-// - update tests to check for RBAC - admin only tasks
+// - create test factories for user
+// - test the jwt provider
