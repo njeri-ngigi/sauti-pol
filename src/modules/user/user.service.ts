@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Op } from 'sequelize';
 import { isUUID } from 'validator';
 import { USER_REPOSITORY } from '../../core/constants';
 import { SignupDto } from '../dto/signup.dto';
@@ -16,14 +17,6 @@ export class UserService {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userModel: typeof User,
   ) {}
-
-  async findOneByEmail(email: string): Promise<User> {
-    return await this.userModel.findOne<User>({ where: { email } });
-  }
-
-  async findOneByPhone(phone: string): Promise<User> {
-    return await this.userModel.findOne<User>({ where: { phone } });
-  }
 
   async findOneById(id: string): Promise<User> {
     if (!isUUID(id)) {
@@ -37,17 +30,28 @@ export class UserService {
     return user;
   }
 
-  async createUser(user: SignupDto): Promise<User> {
-    const dbUserByEmail = await this.findOneByEmail(user.email);
-    if (dbUserByEmail) {
-      throw new ConflictException('User already exists');
-    }
+  async findOneByEmailOrPhone({
+    email,
+    phone,
+  }: Pick<SignupDto, 'email' | 'phone'>): Promise<User> {
+    return await this.userModel.findOne<User>({
+      where: {
+        [Op.or]: [
+          email ? { email: { [Op.eq]: email } } : null,
+          phone ? { phone: { [Op.eq]: phone } } : null,
+        ],
+      },
+    });
+  }
 
-    if (user.phone) {
-      const dbUserByPhone = await this.findOneByPhone(user.phone);
-      if (dbUserByPhone) {
-        throw new ConflictException('User with phone number already exists');
-      }
+  async createUser(user: SignupDto): Promise<User> {
+    const dbUserByEmailOrPhone = await this.findOneByEmailOrPhone({
+      email: user.email,
+      phone: user.phone,
+    });
+
+    if (dbUserByEmailOrPhone) {
+      throw new ConflictException('User with email or phone already exists');
     }
 
     return await this.userModel.create<User>(user);
