@@ -3,10 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from '../dto/auth.dto';
 import { User } from '../user/user.model';
 
-export type UserJWTPayload = {
-  id: string;
-  email: string;
-};
+export type UserJWTPayload = Pick<User, 'email' | 'id'>;
 
 @Injectable()
 export class JwtProvider {
@@ -28,7 +25,7 @@ export class JwtProvider {
     return payload;
   }
 
-  async generateAccessToken(user: User): Promise<AuthDto> {
+  async generateAccessToken(user: UserJWTPayload): Promise<AuthDto> {
     const payload = { email: user.email, id: user.id };
     const accessToken = await this.jwtService.signAsync(payload);
     return { accessToken };
