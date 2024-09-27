@@ -30,6 +30,7 @@ services:
     environment:
       - DB_HOST=db-test
       - NODE_ENV=test
+      - JWT_SECRET=${JWT_SECRET}
 
   db-test:
     image: postgres:14
