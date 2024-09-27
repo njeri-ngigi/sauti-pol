@@ -24,10 +24,6 @@ export class AppModule {}
 
 // TODO:
 // - test the RoleGuard: different roles, no roles, invalid token, no token
-// - test dto validation: valid, invalid
-// - remove any validation covered by dto validation
 // - test role middleware: different roles, no roles, invalid token, no token
-// - test user service: findOneByPhone, findOneById, createUser, updateUserRole, findAll
 // - test user controller: updateUserRole, getAllUsers
-// - update tests for user model
 // - update tests to check for RBAC - admin only tasks
