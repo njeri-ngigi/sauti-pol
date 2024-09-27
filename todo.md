@@ -4,8 +4,6 @@
 - [ ] Yahoo auth
 - [ ] Facebook auth
 - [ ] Apple auth
-- [ ] RBAC
-  - Create roles
 - [ ] Logging
 - [ ] Verify email
 - [ ] Reset password
