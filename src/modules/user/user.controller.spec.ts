@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
 import { INestApplication } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { SEQUELIZE } from '../../core/constants';
 import { AuthDto } from '../dto/auth.dto';
 import { SignupDto } from '../dto/signup.dto';
-import { JwtModule } from '../jwt/jwt.module';
 import { JwtProvider } from '../jwt/jwt.provider';
 import { Roles } from './role.provider';
 import { User } from './user.model';
@@ -32,7 +32,7 @@ describe('UserController', () => {
 
   beforeAll(async () => {
     mockModule = await Test.createTestingModule({
-      imports: [UserModule, JwtModule],
+      imports: [UserModule, JwtModule.register({ secret: 'testing-secret' })],
     }).compile();
 
     // create the app instance
