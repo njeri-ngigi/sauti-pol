@@ -32,7 +32,7 @@ describe('UserController', () => {
 
   beforeAll(async () => {
     mockModule = await Test.createTestingModule({
-      imports: [UserModule, JwtModule.register({ secret: 'testing-secret' })],
+      imports: [UserModule],
     }).compile();
 
     // create the app instance
