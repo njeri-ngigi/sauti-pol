@@ -24,7 +24,7 @@ services:
   test:
     build:
       context: .
-    command: npm run test
+    command: npm run test:silent
     depends_on:
       - db-test
     environment:
