@@ -1,0 +1,3 @@
+echo "Running tests before pushing..."
+
+npm run test:silent

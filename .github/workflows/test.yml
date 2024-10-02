@@ -1,0 +1,42 @@
+name: Run sauti-pol Nestjs Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Install Docker Compose
+    - name: Install Docker Compose
+      run: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+        sudo add-apt-repository \
+          "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+          $(lsb_release -cs) \
+          stable"
+
+        sudo apt-get install docker-compose
+
+        # Check the version:
+        docker-compose --version
+
+    # Step 4: Build the Docker images and run the tests
+    - name: Run tests with Docker Compose
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_NAME_TEST: ${{ secrets.DB_NAME_TEST }}
+      run: |
+        docker-compose up -d db-test  # Start the test database container
+        docker-compose run -e DB_USER=$DB_USER -e DB_PASSWORD=$DB_PASSWORD -e DB_NAME_TEST=$DB_NAME_TEST test  # Run the test service
+        docker-compose down            # Clean up after tests
