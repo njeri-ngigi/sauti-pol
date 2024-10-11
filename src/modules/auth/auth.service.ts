@@ -31,11 +31,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    return await this.jwtService.generateAccessToken(dbUser);
+    return this.jwtService.generateAccessToken(dbUser);
   }
 
   async signupUser(user: SignupDto): Promise<AuthDto> {
     const dbUser = await this.userService.createUser(user);
-    return await this.jwtService.generateAccessToken(dbUser);
+    return this.jwtService.generateAccessToken(dbUser);
   }
 }

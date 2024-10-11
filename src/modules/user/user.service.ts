@@ -27,14 +27,15 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
     return user;
   }
 
-  async findOneByEmailOrPhone({
+  findOneByEmailOrPhone({
     email,
     phone,
   }: Pick<SignupDto, 'email' | 'phone'>): Promise<User> {
-    return await this.userModel.findOne<User>({
+    return this.userModel.findOne<User>({
       where: {
         [Op.or]: [
           email ? { email: { [Op.eq]: email } } : null,
@@ -54,16 +55,16 @@ export class UserService {
       throw new ConflictException('User with email or phone already exists');
     }
 
-    return await this.userModel.create<User>(user);
+    return this.userModel.create<User>(user);
   }
 
   async updateUserRole(id: string, role: Role): Promise<User> {
     const dbUser = await this.findOneById(id);
 
-    return await dbUser.update({ role });
+    return dbUser.update({ role });
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.userModel.findAll<User>();
+  findAll(): Promise<User[]> {
+    return this.userModel.findAll<User>();
   }
 }
