@@ -25,4 +25,19 @@ export class AppModule {}
 // TODO:
 // - test the RoleGuard: different roles, no roles, invalid token, no token
 // - create test factories for user
-// - test the jwt provider
+
+// - create divisions with parent division
+
+// - modules to create:
+//  - polling stations
+//  - voter
+// -
+// - need to create a ui with oauth2
+// - log in with google
+// - create institution
+
+// TODO:
+// - create a factory for these models
+// - create a 3 users: admin, clerk, regular
+// - add logging
+// - add tracing

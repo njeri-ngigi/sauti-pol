@@ -11,12 +11,8 @@ import {
 } from 'sequelize-typescript';
 
 /**
- * Institution model columns:
- * id
- * name
- * address
- * levels
- * divisions
+ * An institution is a unit where elections are held.
+ * For example, a country, school, university, company etc.
  *
  */
 @Table
@@ -29,11 +25,20 @@ export class Institution extends Model<Institution> {
   })
   id: string;
 
+  // name of the institution e.g. Kenya, Nairobi County, Nairobi University
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
+  name: string;
+
+  // level of the institution: we use this to create the level name
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  name: string;
+  level: string;
 
   @Column({
     type: DataType.STRING,
@@ -41,7 +46,16 @@ export class Institution extends Model<Institution> {
   })
   address: string;
 
+  // code of the division e.g. 001, 002, 003
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
+  code: string;
+
   /*** RELATIONSHIPS ***/
+
   @HasMany(() => Level)
   levels: Level[];
 
@@ -50,12 +64,8 @@ export class Institution extends Model<Institution> {
 }
 
 /**
- * Level model columns:
- * id
- * name
- * level
- * parentId
- * institutionId
+ * A level refers to the hierarchy within the institution
+ * For example, in a country, the levels can be country, county, constituency, ward
  *
  */
 @Table
@@ -68,29 +78,27 @@ export class Level extends Model<Level> {
   })
   id: string;
 
+  // name of the level e.g. country, county, constituency, ward
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   name: string;
 
+  // hierarchy level of the institution
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   level: number;
 
-  /*** RELATIONSHIPS ***/
-
-  @BelongsTo(() => Level)
-  parent: Level;
-
-  @ForeignKey(() => Level)
   @Column({
-    type: DataType.UUID,
+    type: DataType.STRING,
     allowNull: true,
   })
-  parentId: string;
+  description: string;
+
+  /*** RELATIONSHIPS ***/
 
   @BelongsTo(() => Institution)
   institution: Institution;
@@ -101,16 +109,16 @@ export class Level extends Model<Level> {
     allowNull: false,
   })
   institutionId: string;
+
+  @HasMany(() => Division)
+  divisions: Division[];
 }
 
+// TODO: division might have a parent division
 /**
- * Division model columns:
- * id
- * name
- * code
- * address
- * institutionId
- * levelId
+ * A division is a sub unit of an institution.
+ * For example, in a country, a division can be constituency, county, sub county, ward etc.
+ * a division has a level and belongs to an institution.
  *
  */
 @Table
@@ -123,12 +131,14 @@ export class Division extends Model<Division> {
   })
   id: string;
 
+  // name of the division e.g. Nairobi, Nairobi West, Nairobi South
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   name: string;
 
+  // code of the division e.g. 001, 002, 003
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -153,6 +163,7 @@ export class Division extends Model<Division> {
   })
   institutionId: string;
 
+  // a division has one level
   @BelongsTo(() => Level)
   level: Level;
 
