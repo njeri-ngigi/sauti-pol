@@ -1,6 +1,6 @@
+import Head from 'next/head';
 import { LoginPrompt } from '@/components/LoginPrompt';
 import { SignupPrompt } from '@/components/SignupPrompt';
-import Head from 'next/head';
 
 export default function Main() {
   return (
@@ -13,7 +13,7 @@ export default function Main() {
           <h1 className="font-majormono text-6xl text-center">
             Welcome to KARMA
           </h1>
-          <p className="font-reenie">Your opinion counts</p>
+          <p className="font-reenie text-2xl">Your opinion counts</p>
         </div>
         <div className="flex flex-col items-center pb-12">
           <SignupPrompt />

@@ -1,23 +1,32 @@
-import classNames from 'classnames';
+import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import { InputHTMLAttributes, ReactNode } from 'react';
 
-interface InputWithSideLabelProps
+import classNames from 'classnames';
+
+interface InputWithSideLabelProps<T extends FieldValues>
   extends InputHTMLAttributes<HTMLInputElement> {
-  label: string | ReactNode;
+  fieldLabel: string | ReactNode;
+  label: Path<T>;
+  register: UseFormRegister<T>;
+
+  requiredErrorMessage?: string;
   error?: string;
 }
 
-export function InputWithSideLabel({
+export function InputWithSideLabel<T extends FieldValues>({
+  fieldLabel,
   label,
   error,
+  register,
+  requiredErrorMessage,
   ...props
-}: InputWithSideLabelProps) {
+}: InputWithSideLabelProps<T>) {
   return (
     <div>
-      {error && <span className="text-xs pl-8 text-red1/70">{error}</span>}
+      <span className="text-xs pl-8 !text-red1">{error}</span>
       <div
         className={classNames(
-          'flex flex-row bg-purple1 rounded-full py-2.5 pl-10 pr-6 mb-6 text-black2 text-base',
+          'flex flex-row bg-purple1 rounded-full py-2.5 pl-10 pr-6 mb-4 text-black2 text-base',
           error && 'bg-red2',
         )}
       >
@@ -27,6 +36,7 @@ export function InputWithSideLabel({
             'border-r border-gray2 w-5/6 focus:outline-none bg-purple1 pr-4',
             error && 'bg-red2',
           )}
+          {...register(label, { required: requiredErrorMessage })}
         />
         <div
           className={classNames(
@@ -34,7 +44,7 @@ export function InputWithSideLabel({
             error && 'text-red1/70',
           )}
         >
-          {label}
+          {fieldLabel}
         </div>
       </div>
     </div>
