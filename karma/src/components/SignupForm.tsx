@@ -1,10 +1,10 @@
 import * as yup from 'yup';
 
-import { ISignupInput } from './types';
 import { InputWithSideLabel } from '@/components/InputWithSideLabel';
 import { PasswordInput } from './PasswordInput';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { ISignupInput } from '@/store/types';
 
 const schema = yup
   .object({

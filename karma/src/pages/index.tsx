@@ -1,8 +1,23 @@
 import Head from 'next/head';
 import { LoginPrompt } from '@/components/LoginPrompt';
 import { SignupPrompt } from '@/components/SignupPrompt';
+import { useAuth } from '@/providers/AuthProvider';
+import { useRouter } from 'next/router';
+import { LoadingState } from '@/components/LoadingState';
 
 export default function Main() {
+  const { accessToken, isLoading } = useAuth();
+  const router = useRouter();
+
+  if (isLoading) {
+    return <LoadingState />;
+  }
+
+  if (accessToken) {
+    router.push('/home');
+    return <></>;
+  }
+
   return (
     <>
       <Head>

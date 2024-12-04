@@ -33,7 +33,7 @@ export function InputWithSideLabel<T extends FieldValues>({
         <input
           {...props}
           className={classNames(
-            'border-r border-gray2 w-5/6 focus:outline-none bg-purple1 pr-4',
+            'border-r border-gray2 w-5/6 focus:outline-none bg-purple1 pr-4 placeholder:font-thin',
             error && 'bg-red2',
           )}
           {...register(label, { required: requiredErrorMessage })}
