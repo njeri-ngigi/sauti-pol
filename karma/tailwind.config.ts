@@ -13,6 +13,7 @@ const config: Config = {
         majormono: ["Major Mono Display"],
         reenie: ["Reenie Beanie"],
         nunito: ["Nunito"],
+        lato: ["Lato"],
       },
     },
     colors: {
