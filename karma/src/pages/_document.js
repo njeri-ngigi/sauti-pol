@@ -20,7 +20,7 @@ export default function Document() {
           crossOrigin=""
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&family=Major+Mono+Display&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Reenie+Beanie&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Major+Mono+Display&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Reenie+Beanie&display=swap"
           rel="stylesheet"
         />
       </Head>
